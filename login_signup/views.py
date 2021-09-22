@@ -29,12 +29,12 @@ class UserLogin(APIView):
         user_id = request.data.get('user_id')
         user_pw = request.data.get('user_pw')
 
-        user = User.objects.filter(user_id = 'user_id').first()
+        user = User.objects.filter(user_id = user_id).first()
 
         if user is None:
-            return JsonResponse({'code': '0001', 'msg': '로그인 실패, 아이디 틀림', 'user_id': None}, status=200)
+            return JsonResponse({'code': '0001', 'msg': '로그인 실패, 아이디 틀림', 'user_id': None, 'user_name': None}, status=200)
 
         if check_password(user_pw, user.user_pw) :
-            return JsonResponse({'code': '0000', 'msg': '로그인 성공', 'user_id': user_id}, status=200)
+            return JsonResponse({'code': '0000', 'msg': '로그인 성공', 'user_id': user.user_id, 'user_name': user.user_name}, status=200)
         else:
-            return JsonResponse({'code': '0002', 'msg': '로그인 실패, 비밀번호 틀림', 'user_id': None}, status=200)
+            return JsonResponse({'code': '0002', 'msg': '로그인 실패, 비밀번호 틀림', 'user_id': None, 'user_name': None}, status=200)
