@@ -1,4 +1,9 @@
 venv/*
 .idea/*
 __pycache__/*
-migrations/*
+friend/migrations/*
+login/migrations/*
+login_signup/migrations/*
+friend/__pycache__/*
+login/__pycache__/*
+login_signup/__pycache__/*
