@@ -5,8 +5,8 @@ from login_signup.models import User
 
 class user_friend(models.Model):
 
-    f_user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default = False)
-    f_friend_id = models.CharField(max_length=255, unique=True, null=False, default=False)
+    uf_user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default = False)
+    uf_friend_id = models.CharField(max_length=255, unique=True, null=False, default=False)
 
     class Meta :
         db_table = 'user_friend'
