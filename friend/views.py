@@ -34,9 +34,9 @@ class AddFriend(APIView):
             raise IntegrityError
 
         # 원래 친구가 아니면
-        friend = user_friend.objects.filter(user_id=user_id, friend_id=add_friend_id)
+        friend = user_friend.objects.filter(uf_user_id=user_id, uf_friend_id=add_friend_id)
         if friend is not None:
-            user_friend.objects.create(user_id=user.user_id, friend_id=add_friend_id)
+            user_friend.objects.create(uf_user_id=user.user_id, uf_friend_id=add_friend_id)
 
         data = dict(
             user_id = user_id,
