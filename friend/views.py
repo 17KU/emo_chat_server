@@ -31,7 +31,7 @@ class AddFriend(APIView):
 
         # 친구 추가 아이디가 본인 아이디 와 같으면
         if user_id == add_friend_id:
-            raise IntegrityError
+            return self.response(message = '아이디가 동일합니다.', status=200)
 
         # 원래 친구가 아니면
         friend = user_friend.objects.filter(uf_user_id=user_id, uf_friend_id=add_friend_id)
@@ -39,8 +39,8 @@ class AddFriend(APIView):
             user_friend.objects.create(uf_user_id=user.user_id, uf_friend_id=add_friend_id)
 
         data = dict(
-            user_id = user_id,
-            friend_id = add_friend_id
+            user_id = friend.uf_user_id,
+            add_friend_id = friend.uf_friend_id
         )
 
         return Response(data)
@@ -51,9 +51,18 @@ class ShowFriend(APIView):
 
         user_id = request.data.get('user_id')
 
+        # 유저 아이디가 올바른지
+        try:
+            user = User.objects.filter(user_id=user_id)
+        except User.DoesNotExist:
+            return self.response(message = '잘못된 요청입니다.', status=200)
 
-        data = dict(
-            user_id = user_id
-        )
+        # 유저 아이디에 해당하는 친구 목록
+        friend = user_friend.objects.filter(uf_user_id=user_id)
+
+        data = {}
+
+        for i in friend:
+            data[i] = friend.uf_friend_id
 
         return Response(data)
