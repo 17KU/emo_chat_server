@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import user_friend
 from login_signup.models import User
+from django.http import JsonResponse
 from django.forms.models import model_to_dict
 
 # Create your views here.
@@ -18,20 +19,20 @@ class AddFriend(APIView):
         try:
             user = User.objects.filter(user_id=user_id).first()
         except User.DoesNotExist:
-            return self.response(message = '잘못된 요청입니다.', status=200)
-
+            return JsonResponse({'code':'0001', 'msg':'아이디가 존재하지 않습니다'}, status=200)
 
         # 친구 추가할 ID가 User 테이블에 존재하는지
         try:
             User.objects.filter(user_id=add_friend_id)
         except User.DoesNotExist:
-            return self.response(message = '잘못된 요청입니다.', status=200)
+            return JsonResponse({'code':'0001','msg':'상대방이 존재하지 않습니다'}, status=200)
+
 
         # 친구 추가 하기
 
         # 친구 추가 아이디가 본인 아이디 와 같으면
         if user_id == add_friend_id:
-            return self.response(message = '아이디가 동일합니다.', status=200)
+            return JsonResponse({'code':'0002', 'msg':'본인을 추가할 수 없습니다'}, status=200)
 
         #criterion1 = Q(uf_user_id=user_id)
         #criterion2 = Q(uf_friend_id=add_friend_id)
@@ -41,13 +42,11 @@ class AddFriend(APIView):
 
         if friend is None:
             user_friend.objects.create(uf_user_id=user, uf_friend_id=add_friend_id)
+            return JsonResponse({'code': '0000', 'mgs': 'success', 'user_id': user_id, 'add_friend_id': add_friend_id},
+                                status=200)
+        else:
+            return JsonResponse({'code':'0003', 'msg':'이미 친구입니다'},status=200)
 
-        data = dict(
-            user_id = user_id,
-            add_friend_id = add_friend_id
-        )
-
-        return Response(data)
 
 
 class ShowFriend(APIView):
