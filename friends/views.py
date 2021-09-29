@@ -124,7 +124,8 @@ class AddFavorite(APIView):
 
         # 즐겨찾기 된 친구인지까지 같이 보냄
         for index in friend:
-            friend_list.append(dict(friend_id=index.uf_friend_id, favorite_state=index.uf_favorite))
+            friend_name = User.objects.filter(user_id=index.uf_friend_id).first().user_name
+            friend_list.append(dict(friend_name=friend_name, friend_id=index.uf_friend_id, favorite_state=index.uf_favorite))
 
         if len(friend_list) > 0:
             return JsonResponse(friend_list, safe=False)
