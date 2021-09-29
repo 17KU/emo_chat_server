@@ -50,17 +50,86 @@ class AddFriend(APIView):
 
 
 class ShowFriend(APIView):
+
     def post(self, request):
 
         user_id = request.data.get('user_id')
 
         # 유저 아이디가 올바른지
         try:
-            user = User.objects.filter(user_id=user_id)
+            User.objects.filter(user_id=user_id).first()
         except User.DoesNotExist:
-            return self.response(message = '잘못된 요청입니다.', status=200)
+            return JsonResponse({'code': '0001', 'msg': '유저 없음'}, status=200)
 
         # 유저 아이디에 해당하는 친구 목록
-        friend = user_friend.objects.filter(uf_user_id=user_id)
+        friend = user_friend.objects.filter(uf_user_id=user_id).all()
 
-        return Response(friend.values())
+        friend_list = []
+
+        #즐겨찾기 된 친구인지까지 같이 보냄
+        for index in friend:
+            friend_name = User.objects.filter(user_id=index.uf_friend_id).first().user_name
+            friend_list.append(dict(friend_name=friend_name,friend_id= index.uf_friend_id, favorite_state=index.uf_favorite))
+
+
+        if len(friend_list) >0:
+            return JsonResponse(friend_list, safe=False)
+
+        else:
+            return JsonResponse({'code': '0002', 'msg': '친구 없음'}, status=200)
+
+
+
+
+class AddFavorite(APIView):
+
+    def post(self, request):
+
+        user_id = request.data.get('user_id')
+        favorite_add = request.data.get('favorite_add')
+
+
+        # 유저 아이디가 올바른지
+        try:
+            User.objects.filter(user_id=user_id).first()
+        except User.DoesNotExist:
+            return JsonResponse({'code': '0001', 'msg': '유저 없음'}, status=200)
+
+        # 즐찾할 아이디가 올바른지
+        try:
+            User.objects.filter(user_id=favorite_add).first()
+        except User.DoesNotExist:
+            return JsonResponse({'code': '0001', 'msg': '유저 없음'}, status=200)
+
+        # 즐겨찾기
+        favorite = user_friend.objects.filter(uf_user_id=user_id,uf_friend_id=favorite_add).first()
+
+        # 즐겨찾기 해제
+        if favorite.uf_favorite is True :
+            favorite.uf_favorite = False
+            favorite.save()
+        # 즐겨찾기 추가
+        elif favorite.uf_favorite is False :
+            favorite.uf_favorite = True
+            favorite.save()
+
+
+
+        # 친구 목록 다시 불러와줌
+
+        # 유저 아이디에 해당하는 친구 목록
+        friend = user_friend.objects.filter(uf_user_id=user_id).all()
+
+        friend_list = []
+
+        # 즐겨찾기 된 친구인지까지 같이 보냄
+        for index in friend:
+            friend_list.append(dict(friend_id=index.uf_friend_id, favorite_state=index.uf_favorite))
+
+        if len(friend_list) > 0:
+            return JsonResponse(friend_list, safe=False)
+
+        else:
+            return JsonResponse({'code': '0002', 'msg': '친구 없음'}, status=200)
+
+
