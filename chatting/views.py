@@ -43,18 +43,35 @@ class ChatListInsert(APIView):
 
         friend = user_friend.objects.filter(uf_user_id = user_id, uf_friend_id = friend_id).first()
 
-        #친구 관계인지 확인
+        #친구 관계일때
         if friend is not None:
-            uc_chat_list = User_Chat.objects.filter(uc_user_id = user_id).all()
-            for uc_chat in uc_chat_list:
-                chat = Chat.objects.filter(chat_index = uc_chat.uc_chat_index.chat_index).first()
-                if (chat is not None) and (chat.chat_other_id == friend_id):
-                    return JsonResponse({'code': '0002', 'msg': '이미 존재하는 채팅방 입니다.'}, status=200)
+            user_instance = User.objects.filter(user_id=user_id).first()
+            uc_chat_list = User_Chat.objects.filter(uc_user_id = user_instance).all()
 
-            friend_name = User.objects.filter(user_id = friend_id).first().user_name
-            new_chat = Chat.objects.create(chat_title = friend_name, chat_other_id = friend_id)
-            User_Chat.objects.create(uc_chat_index = new_chat.chat_index, uc_user_id = user_id)
+            #채팅방이 하나 이상 존재할때
+            if len(uc_chat_list) != 0 :
+                for uc_chat in uc_chat_list:
+                    chat = Chat.objects.filter(chat_index = uc_chat.uc_chat_index.chat_index).first()
+                    #이미 존재하는 채팅방일때
+                    if ((chat is not None) and (chat.chat_other_id == friend_id)):
+                        return JsonResponse({'code': '0002', 'msg': '이미 존재하는 채팅방 입니다.'}, status=200)
 
+                #존재하지 않는 채팅방일때
+                friend_name = User.objects.filter(user_id=friend_id).first().user_name
+                #user_instance = User.objects.filter(user_id = user_id).first()
+                new_chat = Chat.objects.create(chat_title=friend_name, chat_other_id=friend_id)
+                User_Chat.objects.create(uc_chat_index=new_chat, uc_user_id=user_instance)
+                print("기존 채팅방 개수 : ", len(uc_chat_list))
+                return JsonResponse({'code': '0003', 'msg': '채팅방 새로 개설'}, status=200)
+            #채팅방이 하나도 없을때
+            else:
+                friend_name = User.objects.filter(user_id=friend_id).first().user_name
+                #user_instance = User.objects.filter(user_id=user_id).first()
+                new_chat = Chat.objects.create(chat_title=friend_name, chat_other_id=friend_id)
+                User_Chat.objects.create(uc_chat_index=new_chat, uc_user_id=user_instance)
+                return JsonResponse({'code': '0004', 'msg': '채팅방 새로 개설 (첫번째 채팅방)'}, status=200)
+
+        #친구 관계 아닐때
         else:
             return JsonResponse({'code': '0001', 'msg': '서로 친구 관계가 아닙니다.'}, status=200)
 
