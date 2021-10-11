@@ -16,17 +16,21 @@ class AddFriend(APIView):
 
 
         # 유저 아이디가 올바른지
-        try:
-            user = User.objects.filter(user_id=user_id).first()
-        except User.DoesNotExist:
+
+        user = User.objects.filter(user_id=user_id).first()
+        if user is None:
             return JsonResponse({'code':'0001', 'msg':'아이디가 존재하지 않습니다'}, status=200)
 
         # 친구 추가할 ID가 User 테이블에 존재하는지
-        try:
-            User.objects.filter(user_id=add_friend_id).first()
-        except User.DoesNotExist:
-            return JsonResponse({'code':'0001','msg':'상대방이 존재하지 않습니다'}, status=200)
+        #try:
+        #   friend = User.objects.filter(user_id=add_friend_id).first()
+        #except friend.DoesNotExist:
+        #    return JsonResponse({'code':'0001','msg':'상대방이 존재하지 않습니다'}, status=200)
 
+        # 친구 추가할 ID가 User 테이블에 존재하는지
+        friend = User.objects.filter(user_id=add_friend_id).first()
+        if friend is None:
+            return JsonResponse({'code':'0001','msg':'상대방이 존재하지 않습니다'}, status=200)
 
         # 친구 추가 하기
 
@@ -56,9 +60,9 @@ class ShowFriend(APIView):
         user_id = request.data.get('user_id')
 
         # 유저 아이디가 올바른지
-        try:
-            User.objects.filter(user_id=user_id).first()
-        except User.DoesNotExist:
+
+        user = User.objects.filter(user_id=user_id).first()
+        if user is None:
             return JsonResponse({'code': '0001', 'msg': '유저 없음'}, status=200)
 
         # 유저 아이디에 해당하는 친구 목록
@@ -90,15 +94,13 @@ class AddFavorite(APIView):
 
 
         # 유저 아이디가 올바른지
-        try:
-            User.objects.filter(user_id=user_id).first()
-        except User.DoesNotExist:
-            return JsonResponse({'code': '0001', 'msg': '유저 없음'}, status=200)
+        user = User.objects.filter(user_id=user_id).first()
+        if user is None:
+            return JsonResponse({'code': '0001', 'msg': '아이디가 존재하지 않습니다'}, status=200)
 
         # 즐찾할 아이디가 올바른지
-        try:
-            User.objects.filter(user_id=favorite_add).first()
-        except User.DoesNotExist:
+        friend = User.objects.filter(user_id=favorite_add).first()
+        if friend is None:
             return JsonResponse({'code': '0001', 'msg': '유저 없음'}, status=200)
 
         # 즐겨찾기
