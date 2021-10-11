@@ -23,7 +23,7 @@ class AddFriend(APIView):
 
         # 친구 추가할 ID가 User 테이블에 존재하는지
         try:
-            User.objects.filter(user_id=add_friend_id)
+            User.objects.filter(user_id=add_friend_id).first()
         except User.DoesNotExist:
             return JsonResponse({'code':'0001','msg':'상대방이 존재하지 않습니다'}, status=200)
 
