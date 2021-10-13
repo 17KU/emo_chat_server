@@ -203,10 +203,11 @@ def predict(predict_sentence):
     print("->입력한 문장의 감정:" + test_eval[0])
     return test_eval[0]
 
-
+'''
 while True:
   sentence = input('입력문장(없으면 no): ')
   if sentence == 'no':
     break
   predict(sentence)
   print('\n')
+'''

@@ -21,5 +21,5 @@ urlpatterns = [
     path('login_signup/', include('login_signup.urls')),
     path('friends/', include('friends.urls')),
     path('chatting/', include('chatting.urls')),
-    path('KoBert/',include('KoBert.urls'))
+    path('KoBert/', include('KoBert.urls'))
 ]
