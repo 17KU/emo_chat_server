@@ -2,8 +2,7 @@ import os
 
 from rest_framework.views import APIView
 from django.http import JsonResponse
-import models
-
+from . import models
 class GetEmotion(APIView):
     def post(self, request):
 
@@ -14,4 +13,5 @@ class GetEmotion(APIView):
 
         emotion = models.predict(message)
 
+        print(emotion)
         return JsonResponse(emotion)
