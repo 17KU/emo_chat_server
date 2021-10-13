@@ -1,21 +1,3 @@
-from django.db import models
-
-#터미널에 입력해서 설치할 것들
-'''
-pip install mxnet
-pip3 install torch
-#!pip3 install torchvision
-pip install transformers==3.0.2
-pip install gluonnlp
-pip install sentencepiece
-pip install pandas
---------------------------아래는 추가로 설치한거
-pip install xlrd
-pip install openpyxl
-pip3 install -U scikit-learn scipy matplotlib
---------------------------------
-pip install git+https://git@github.com/SKTBrain/KoBERT.git@master
-'''
 
 import torch
 from torch import nn
@@ -218,6 +200,7 @@ def predict(predict_sentence):
         test_eval.append("행복")
 
     print("->입력한 문장의 감정:" + test_eval[0])
+    return test_eval[0]
 
 
 while True:

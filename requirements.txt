@@ -7,7 +7,7 @@ sqlparse==0.4.2
 mxnet
 torch
 torchvision
-transformers
+transformers==3.0.2
 gluonnlp
 sentencepiece
 pandas
