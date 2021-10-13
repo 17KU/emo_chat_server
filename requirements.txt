@@ -4,3 +4,14 @@ djangorestframework==3.12.4
 mysqlclient==2.0.3
 pytz==2021.1
 sqlparse==0.4.2
+mxnet
+torch
+torchvision
+transformers
+gluonnlp
+sentencepiece
+pandas
+xlrd
+openpyxl
+scikit-learn scipy matplotlib
+git+https://git@github.com/SKTBrain/KoBERT.git@master
