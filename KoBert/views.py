@@ -11,7 +11,8 @@ class GetEmotion(APIView):
         dir_path = os.getcwd()
         model_path = os.path.join(dir_path, "\KoBERT")
 
-        emotion = models.predict(message)
+        emotion =[]
+        emotion.append(dict(emotion=models.predict(message)))
 
-        print(emotion)
-        return JsonResponse(emotion)
+        #print(emotion)
+        return JsonResponse(dict(emotion=models.predict(message)))
