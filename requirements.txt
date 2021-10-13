@@ -13,5 +13,4 @@ sentencepiece
 pandas
 xlrd
 openpyxl
-scikit-learn scipy matplotlib
 git+https://git@github.com/SKTBrain/KoBERT.git@master
