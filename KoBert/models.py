@@ -1,3 +1,4 @@
+from django.db import models
 
 import torch
 from torch import nn
@@ -17,7 +18,7 @@ from transformers.optimization import get_cosine_schedule_with_warmup
 import os
 import pandas as pd
 
-
+print(os.getcwd())
 dir_path = os.getcwd()
 data_name = "data.xlsx"
 model_name = "classifier.pt"
