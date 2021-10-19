@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'login_signup',
     'friends',
     'chatting',
-    'KoBert'
+    'KoBert',
+    'chattingroom'
 ]
 
 MIDDLEWARE = [
