@@ -83,7 +83,7 @@ class ChatListInsert(APIView):
 
         #친구 관계 아닐때
         else:
-            return JsonResponse({'chat_index': None, 'chat_title': None, 'chat_other_id': None, 'code': '0001', 'msg': '서로 친구 관계가 아닙니다.', }, status=200)
+            return JsonResponse({'chat_index': None, 'chat_title': None, 'chat_other_id': None, 'code': '0001', 'msg': '서로 친구 관계가 아닙니다.'}, status=200)
 
 
 
