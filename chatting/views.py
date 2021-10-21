@@ -22,16 +22,26 @@ class ChatListSelect(APIView):
 
         # chat_index를 통해 채팅방 목록을 가지고 옴
         chat_list = []
+
         for uc_chat_index in uc_chat_index_list:
             chat = Chat.objects.filter(chat_index=uc_chat_index.chat_index).first()
             chat_list.append(dict(chat_index=chat.chat_index,
                                   chat_title=chat.chat_title,
-                                  chat_other_id=chat.chat_other_id))
+                                  chat_other_id=chat.chat_other_id,
+                                  code='0000',
+                                  msg='채팅 있음'
+                                  ))
 
         if len(chat_list) > 0:
             return JsonResponse(chat_list, safe=False)
         else:
-            return JsonResponse({'code': '0001', 'msg': '채팅 없음'}, status=200)
+            chat_list.append(dict(chat_index=None,
+                                  chat_title=None,
+                                  chat_other_id=None,
+                                  code='0001',
+                                  msg='채팅 없음'
+                                  ))
+            return JsonResponse(chat_list, safe=False)
 
 
 class ChatListInsert(APIView):
