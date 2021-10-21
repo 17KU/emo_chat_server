@@ -64,7 +64,7 @@ class ChatListInsert(APIView):
                     chat = Chat.objects.filter(chat_index = uc_chat.uc_chat_index.chat_index).first()
                     #이미 존재하는 채팅방일때
                     if ((chat is not None) and (chat.chat_other_id == friend_id)):
-                        return JsonResponse({'code': '0002', 'msg': '이미 존재하는 채팅방 입니다.'}, status=200)
+                        return JsonResponse({'code': '0002', 'msg': '이미 존재하는 채팅방 입니다.', 'chat_index': None, 'chat_title': None, 'chat_other_id':None}, status=200)
 
                 #존재하지 않는 채팅방일때
                 friend_name = User.objects.filter(user_id=friend_id).first().user_name
@@ -83,7 +83,7 @@ class ChatListInsert(APIView):
 
         #친구 관계 아닐때
         else:
-            return JsonResponse({'code': '0001', 'msg': '서로 친구 관계가 아닙니다.'}, status=200)
+            return JsonResponse({'code': '0001', 'msg': '서로 친구 관계가 아닙니다.', 'chat_index': None, 'chat_title': None, 'chat_other_id':None}, status=200)
 
 
 
