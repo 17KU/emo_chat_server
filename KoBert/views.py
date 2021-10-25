@@ -16,3 +16,4 @@ class GetEmotion(APIView):
 
         #print(emotion)
         return JsonResponse(dict(emotion=models.predict(message)))
+
