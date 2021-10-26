@@ -22,6 +22,16 @@ class UserRegist(APIView):
 
         return JsonResponse({'code': '0000', 'msg': '회원가입 성공'}, status=200)
 
+class UserDupliCheck(APIView):
+    def post(self, request):
+        user_id = request.data.get('user_id')
+
+        user = User.objects.filter(user_id = user_id).first()
+        if user is None:
+            return JsonResponse({'code': '0000', 'msg': '사용 가능한 아이디'}, status = 200)
+        else:
+            return JsonResponse({'code': '0001', 'msg': '이미 존재하는 아이디'}, status = 200)
+
 class UserLogin(APIView):
     # APIView에 있는 post() method
     def post(self, request):
