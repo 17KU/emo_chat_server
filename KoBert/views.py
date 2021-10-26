@@ -17,3 +17,11 @@ class GetEmotion(APIView):
         #print(emotion)
         return JsonResponse(dict(emotion=models.predict(message)))
 
+'''
+놀람 = 0
+분노 = 1
+불안 = 2
+슬픔 = 3
+중립 = 4
+행복 = 5
+'''
