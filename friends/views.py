@@ -51,6 +51,42 @@ class AddFriend(APIView):
         else:
             return JsonResponse({'code':'0003', 'msg':'이미 친구입니다'},status=200)
 
+class DeleteFriend(APIView):
+    def post(self, request):
+
+        user_id = request.data.get('user_id')
+        delete_friend_id = request.data.get('delete_friend_id')
+
+        # 유저 아이디가 올바른지
+
+        user = User.objects.filter(user_id=user_id).first()
+        if user is None:
+            return JsonResponse({'code': '0001', 'msg': '아이디가 존재하지 않습니다'}, status=200)
+
+        # 친구 추가할 ID가 User 테이블에 존재하는지
+        friend = User.objects.filter(user_id=delete_friend_id).first()
+        if friend is None:
+            return JsonResponse({'code': '0001', 'msg': '상대방이 존재하지 않습니다'}, status=200)
+
+        #친구 삭제하기
+
+        # 친구 삭제 아이디가 본인 아이디 와 같으면
+        if user_id == delete_friend_id:
+            return JsonResponse({'code': '0002', 'msg': '본인을 삭제할 수 없습니다'}, status=200)
+
+        # 원래 친구가 아니면
+        friend = user_friend.objects.filter(uf_user_id=user_id, uf_friend_id=delete_friend_id).first()
+
+        if friend is None:
+            return JsonResponse({'code': '0003', 'msg': '친구가 아닙니다'}, status=200)
+        else:
+            friend.delete()
+            return JsonResponse({'code': '0000', 'mgs': 'success', 'user_id': user_id, 'add_friend_id': delete_friend_id},
+                                status=200)
+
+
+        return JsonResponse()
+
 
 
 class ShowFriend(APIView):
