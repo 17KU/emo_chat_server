@@ -81,7 +81,7 @@ class DeleteFriend(APIView):
             return JsonResponse({'code': '0003', 'msg': '친구가 아닙니다'}, status=200)
         else:
             friend.delete()
-            return JsonResponse({'code': '0000', 'mgs': 'success', 'user_id': user_id, 'delete_friend_id': delete_friend_id},
+            return JsonResponse({'code': '0000', 'msg': 'success', 'user_id': user_id, 'delete_friend_id': delete_friend_id},
                                 status=200)
 
 
