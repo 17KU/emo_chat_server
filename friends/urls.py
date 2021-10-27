@@ -10,5 +10,5 @@ urlpatterns = [
     url('show_friend', ShowFriend.as_view(), name ='show_friend'),
     url('add_favorite', AddFavorite.as_view(), name ='add_favorite'),
     url('delete_friend', DeleteFriend.as_view(), name = 'delete_friend'),
-    url('find_chat', findChat, name = 'find_chat')
+    url('find_chat', findChat.as_view(), name = 'find_chat')
 ]
