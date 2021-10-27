@@ -5,6 +5,8 @@ from .models import user_friend
 from login_signup.models import User
 from django.http import JsonResponse
 from django.forms.models import model_to_dict
+from chatting.models import User_Chat
+from chatting.models import Chat
 
 # Create your views here.
 
@@ -158,3 +160,67 @@ class AddFavorite(APIView):
 
 
 
+class findChat(APIView):
+    # APIView에 있는 post() method
+    def post(self, request):
+        # client로 부터 받은 user_id, friend_id 저장
+        user_id = request.data.get('user_id')
+        friend_id = request.data.get('friend_id')
+
+        friend = user_friend.objects.filter(uf_user_id=user_id, uf_friend_id=friend_id).first()
+
+        # 친구 관계일때
+        if friend is not None:
+
+            user_instance = User.objects.filter(user_id=user_id).first()
+            my_chat_list = []
+
+            # 리스트에 정방향 채팅 인덱스 추가
+            uc_list = User_Chat.objects.filter(uc_user_id=user_instance).all()
+            for my_uc in uc_list:
+                my_chat_list.append(my_uc.uc_chat_index.chat_index)
+
+            # 리스트에 역방향 채팅 인덱스 추가
+            c_list = Chat.objects.filter(chat_other_id=user_instance.user_id).all()
+            for my_c in c_list:
+                my_chat_list.append(my_c.chat_index)
+
+            # 채팅방이 하나 이상 존재할때
+            if len(my_chat_list) != 0:
+                for my_chat_index in my_chat_list:
+                    chat = Chat.objects.filter(chat_index=my_chat_index).first()
+                    user_chat = User_Chat.objects.filter(uc_chat_index=my_chat_index).first()
+                    # 이미 존재하는 채팅방일때
+                    if ((chat is not None) and (chat.chat_other_id == friend_id)):
+                        return JsonResponse({'chat_index': chat.chat_index, 'chat_title': chat.chat_title,
+                                             'chat_other_id': chat.chat_other_id, 'code': '0002',
+                                             'msg': '내가 이미 만든 채팅방 입니다.'}, status=200)
+                    if ((user_chat is not None) and (user_chat.uc_user_id.user_id == friend_id)):
+                        name = User.objects.filter(user_id=friend_id).first().user_name
+                        return JsonResponse(
+                            {'chat_index': user_chat.uc_chat_index.chat_index, 'chat_title': name,
+                             'chat_other_id': friend_id, 'code': '0003', 'msg': '친구가 이미 만든 채팅방 입니다.'}, status=200)
+
+                # 존재하지 않는 채팅방일때
+                friend_name = User.objects.filter(user_id=friend_id).first().user_name
+                # user_instance = User.objects.filter(user_id = user_id).first()
+                new_chat = Chat.objects.create(chat_title=friend_name, chat_other_id=friend_id)
+                User_Chat.objects.create(uc_chat_index=new_chat, uc_user_id=user_instance)
+                print("기존 채팅방 개수 : ", len(my_chat_list))
+                return JsonResponse({'chat_index': new_chat.chat_index, 'chat_title': new_chat.chat_title,
+                                     'chat_other_id': new_chat.chat_other_id, 'code': '0004', 'msg': '채팅방 새로 개설'},
+                                    status=200)
+            # 채팅방이 하나도 없을때
+            else:
+                friend_name = User.objects.filter(user_id=friend_id).first().user_name
+                # user_instance = User.objects.filter(user_id=user_id).first()
+                new_chat = Chat.objects.create(chat_title=friend_name, chat_other_id=friend_id)
+                User_Chat.objects.create(uc_chat_index=new_chat, uc_user_id=user_instance)
+                return JsonResponse({'chat_index': new_chat.chat_index, 'chat_title': new_chat.chat_title,
+                                     'chat_other_id': new_chat.chat_other_id, 'code': '0005',
+                                     'msg': '채팅방 새로 개설 (첫번째 채팅방)'}, status=200)
+
+        # 친구 관계 아닐때
+        else:
+            return JsonResponse({'chat_index': None, 'chat_title': None, 'chat_other_id': None, 'code': '0001',
+                                 'msg': '서로 친구 관계가 아닙니다.'}, status=200)
