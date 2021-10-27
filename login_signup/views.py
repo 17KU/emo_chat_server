@@ -48,3 +48,43 @@ class UserLogin(APIView):
             return JsonResponse({'code': '0000', 'msg': '로그인 성공', 'user_id': user.user_id, 'user_name': user.user_name}, status=200)
         else:
             return JsonResponse({'code': '0002', 'msg': '로그인 실패, 비밀번호 틀림', 'user_id': None, 'user_name': None}, status=200)
+
+
+class UserNameChange(APIView):
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        user_pw = request.data.get('user_pw')
+        user_name = request.data.get('user_name')
+
+        try :
+            user = User.objects.get(user_id = user_id)
+            if check_password(user_pw, user.user_pw):
+                user.user_name = user_name
+                user.save()
+                return JsonResponse({'code': '0000', 'msg': user_name+'으로 이름 변경 완료'}, status = 200)
+            else :
+                return JsonResponse({'code': '0001', 'msg': '비밀번호가 틀렸습니다.'}, status=200)
+        except User.DoesNotExist:
+            pass
+
+        return JsonResponse({'code': '0002', 'msg': '존재하지 않는 아이디입니다.'}, status=200)
+
+class UserPwdChange(APIView):
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        user_pw = request.data.get('user_pw')
+        user_new_pw = request.data.get('user_new_pw')
+
+        try:
+            user = User.objects.get(user_id = user_id)
+            if check_password(user_pw, user.user_pw):
+                user_pw_encryted = make_password(user_new_pw)
+                user.user_pw = user_pw_encryted
+                user.save()
+                return JsonResponse({'code': '0000', 'msg': user_new_pw+'비밀번호 변경 완료'}, status=200)
+            else:
+                return JsonResponse({'code': '0001', 'msg': '비밀번호가 틀렸습니다.'}, status=200)
+        except User.DoesNotExist:
+            pass
+
+        return JsonResponse({'code': '0002', 'msg': '존재하지 않는 아이디입니다.'}, status=200)
