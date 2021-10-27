@@ -125,4 +125,28 @@ class ChatListInsert(APIView):
 
 
 
+class ChatListDelete(APIView):
+    def post(self, request):
+        chat_index = request.data.get('chat_index')
+        user_id = request.data.get('user_id')
 
+        try:
+            user_chat = User_Chat.objects.get(uc_chat_index=chat_index)
+            chat = Chat.objects.get(chat_index=chat_index)
+
+            # 존재하는 채팅방인지 체크
+            if (user_chat is not None) and (chat is not None):
+                # 권한 체크
+                if (user_chat.uc_user_id.user_id == user_id) or (chat.chat_other_id == user_id):
+                    user_chat.delete()
+                    chat.delete()
+                    return JsonResponse({"code": "0000", "msg": "채팅방을 삭제했습니다."}, status=200)
+                else:
+                    return JsonResponse({"code": "0001", "msg": "채팅방을 삭제할 권한이 없습니다."}, status=200)
+
+        except User_Chat.DoesNotExist:
+            pass
+        except Chat.DoesNotExist:
+            pass
+
+        return JsonResponse({"code": "0002", "msg": "삭제할 채팅방이 존재하지 않습니다."}, status=200)
