@@ -154,7 +154,7 @@ class AddFavorite(APIView):
         elif favorite.uf_favorite is False :
             favorite.uf_favorite = True
             favorite.save()
-            return JsonResponse({'code': '0003', 'msg': '즐겨찾기 추가가'}, status=00)
+            return JsonResponse({'code': '0003', 'msg': '즐겨찾기 추가가'}, status=200)
 
 
 
