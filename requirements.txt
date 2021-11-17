@@ -5,13 +5,13 @@ mysqlclient==2.0.3
 pytz==2021.1
 sqlparse==0.4.2
 mxnet
-torch
+torch==1.8.1
 torchvision
-transformers==3.0.2
+transformers==4.8.2
 gluonnlp
-sentencepiece
+sentencepiece==0.1.91
 pandas
 xlrd
 openpyxl
-git+https://github.com/SKTBrain/KoBERT.git@master
+git+https://github.com/SKTBrain/KoBERT.git#egg=kobert_tokenizer&subdirectory=kobert_hf
 scikit-learn==0.20.3

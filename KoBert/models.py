@@ -1,3 +1,4 @@
+import gluonnlp.data
 from django.db import models
 
 import torch
@@ -9,7 +10,7 @@ import gluonnlp as nlp
 import numpy as np
 from tqdm import tqdm, tqdm_notebook
 
-from kobert.utils import get_tokenizer
+from kobert_tokenizer import KoBERTTokenizer
 from kobert.pytorch_kobert import get_pytorch_kobert_model
 
 from transformers import AdamW
@@ -45,7 +46,7 @@ chatbot_data.loc[(chatbot_data['Emotion'] == "행복"), 'Emotion'] = 5  #행복 
 data_list = []
 for q, label in zip(chatbot_data['Sentence'], chatbot_data['Emotion']):
   data = []
-  data.append(q)
+  data.append(str(q))
   data.append(str(label))
   data_list.append(data)
 
@@ -62,6 +63,7 @@ print(len(dataset_test))
 class BERTDataset(Dataset):
   def __init__(self, dataset, sent_idx, label_idx, bert_tokenizer, max_len, pad, pair):
     transform = nlp.data.BERTSentenceTransform(bert_tokenizer, max_seq_length=max_len, pad=pad, pair=pair)
+
     self.sentences = [transform([i[sent_idx]]) for i in dataset]
     self.labels = [np.int32(i[label_idx]) for i in dataset]
 
@@ -80,9 +82,9 @@ max_grad_norm = 1
 log_interval = 200
 learning_rate = 5e-5
 
-
-tokenizer = get_tokenizer()
+tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
 tok = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
+
 
 data_train = BERTDataset(dataset_train, 0, 1, tok, max_len, True, False)
 data_test = BERTDataset(dataset_train, 0, 1, tok, max_len, True, False)
@@ -162,7 +164,7 @@ model.load_state_dict(torch.load(model_path, map_location=device))
 #model = load_state_dict(torch.load('EmotionClassifier1.pt', map_location=device))
 
 
-tokenizer = get_tokenizer()
+tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
 tok = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower = False)
 
 def predict(predict_sentence):
